@@ -19,8 +19,7 @@ public class Application {
             screen.doResizeIfNecessary(); // resize screen if necessary
 
             screen.clear();
-            TextCharacter character = new TextCharacter('X');
-            screen.setCharacter(10, 10, character);
+            screen.setCharacter(10, 10, TextCharacter.fromCharacter('X')[0]);
             screen.refresh();
         } catch (IOException e) {
             e.printStackTrace();
