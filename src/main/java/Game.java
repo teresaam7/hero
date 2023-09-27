@@ -11,11 +11,9 @@ public class Game {
     private static Screen screen;
     private Arena arena;
     // Default constructor
-    public Game(){
+    public Game(int width, int height){
         // This code initializes a Lanterna Terminal and a Screen
         try {
-            int width = 80;
-            int height = 24;
             arena = new Arena(width, height);
             Terminal terminal = new DefaultTerminalFactory().createTerminal();
             screen = new TerminalScreen(terminal);
