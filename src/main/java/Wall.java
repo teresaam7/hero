@@ -8,20 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Wall {
-    private Position position;
+public class Wall extends Element {
     public Wall(int x, int y){
-        this.position = new Position(x, y);
+        super(x, y);
     }
-    public Position getPosition() {
-        return position;
-    }
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-    public void draw(TextGraphics graphics) throws IOException {
+    public void draw(TextGraphics graphics) {
         graphics.setForegroundColor(TextColor.Factory.fromString("#1E90FF"));
         graphics.enableModifiers(SGR.BOLD);
-        graphics.putString(new TerminalPosition(position.getX(), position.getY()), "W");
+        graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "W");
     }
 }
