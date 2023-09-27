@@ -9,12 +9,14 @@ import com.googlecode.lanterna.TextCharacter;
 import java.io.IOException;
 public class Game {
     private static Screen screen;
-    private Hero hero;
+    private Arena arena;
     // Default constructor
     public Game(){
         // This code initializes a Lanterna Terminal and a Screen
         try {
-            hero = new Hero(10, 10);
+            int width = 80;
+            int height = 24;
+            arena = new Arena(width, height);
             Terminal terminal = new DefaultTerminalFactory().createTerminal();
             screen = new TerminalScreen(terminal);
             screen.setCursorPosition(null); // we don't need a cursor
@@ -26,7 +28,7 @@ public class Game {
     }
     private void draw() throws IOException {
         screen.clear();
-        hero.draw(screen);
+        arena.draw(screen);
         screen.refresh();
     }
     public void run() throws IOException{
@@ -42,24 +44,7 @@ public class Game {
         screen.close();
 
     }
-    private void moveHero(Position position) {
-        hero.setPosition(position);
-    }
-
     private void processKey(KeyStroke key) {
-        switch (key.getKeyType()){
-            case ArrowRight:
-                moveHero(hero.moveRight());
-                break;
-            case ArrowLeft:
-                moveHero(hero.moveLeft());
-                break;
-            case ArrowDown:
-                moveHero(hero.moveDown());
-                break;
-            case ArrowUp:
-                moveHero(hero.moveUp());
-                break;
-        }
+        arena.processKey(key);
     }
 }
