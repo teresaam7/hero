@@ -3,7 +3,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 import java.util.*;
@@ -14,6 +13,7 @@ public class Arena {
     private Hero hero;
     private List<Wall> walls;
     private List<Coin> coins;
+    private List<Monster> monsters;
     public Arena(int width, int height){
         this.width = width;
         this.height = height;
@@ -21,7 +21,9 @@ public class Arena {
         this.hero = new Hero(width / 2, height / 2);
         this.walls = createWalls();
         this.coins = createCoins();
+        this.monsters = createMonsters();
     }
+    // Methods related with the Hero's movement
     public boolean canHeroMove(Position position){
         int x = position.getX();
         int y = position.getY();
@@ -58,6 +60,7 @@ public class Arena {
                 break;
         }
     }
+    // Method related with the creation of walls
     private List<Wall> createWalls() {
         List<Wall> walls = new ArrayList<>();
         for (int c = 0; c < width; c++) {
@@ -70,6 +73,7 @@ public class Arena {
         }
         return walls;
     }
+    // Methods related with the Coins that are collected by the Hero
     private List<Coin> createCoins() {
         Random random = new Random();
         ArrayList<Coin> coins = new ArrayList<>();
@@ -92,17 +96,6 @@ public class Arena {
         int cY = random.nextInt(height - 2) + 1;
         return new Position(cX, cY);
     }
-    private boolean collisionCoins(int x, int y){
-        for (Coin coin: coins){
-            if (coin.getPosition().getX() == x && coin.getPosition().getY() == y){
-                return true;
-            }
-        }
-        return false;
-    }
-    private boolean collisionHero(int x, int y){
-        return (hero.getPosition().getX() == x && hero.getPosition().getY() == y);
-    }
     public void retrieveCoins(){
         Iterator<Coin> iterator = coins.iterator();
         while (iterator.hasNext()) {
@@ -113,9 +106,48 @@ public class Arena {
             }
         }
     }
+    // Methods related to the monsters that are disturbing our Hero
+    private List<Monster> createMonsters(){
+        Random random = new Random();
+        List<Monster> monsters = new ArrayList<>();
+        for (int i = 0; i < 7; i++){
+            monsters.add(new Monster(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1));
+        }
+        return monsters;
+    }
+    public boolean canMonsterMove(Position position){
+        int x = position.getX();
+        int y = position.getY();
+        if (x >= width || y >= height || x < 0 || y < 0){
+            return false;
+        }
+        // Check if the position collides with a wall
+        for (Wall wall: walls) {
+            if(wall.getPosition().equals(position)){
+                return false;
+            }
+        }
+        return true;
+    }
+    public void moveMonsters(){
+        for (Monster monster: monsters){
+            if(canMonsterMove(monster.move())){
+                monster.setPosition(monster.move());
+            }
+        }
+    }
+    public boolean verifyMonsterCollisions(){
+        for (Monster monster: monsters){
+            if(monster.getPosition().equals(hero.getPosition())){
+                return true;
+            }
+        }
+        return false;
+    }
+    // Draw method for the scenario and all the componenets of the game
     public void draw(TextGraphics graphics) throws IOException {
         // Drawing the arena
-        graphics.setBackgroundColor(TextColor.Factory.fromString("#87ceeb"));
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#a5e6c8"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
         // Drawing the walls
         for (Wall wall : walls) {
@@ -124,6 +156,10 @@ public class Arena {
         // Drawing the coins
         for (Coin coin : coins){
             coin.draw(graphics);
+        }
+        // Drawing the monsters
+        for (Monster monster : monsters) {
+            monster.draw(graphics);
         }
         // Drawing the hero
         hero.draw(graphics);

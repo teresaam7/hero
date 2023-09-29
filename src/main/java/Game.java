@@ -29,13 +29,22 @@ public class Game {
         arena.draw(screen.newTextGraphics());
         screen.refresh();
     }
+    public void endGame(){
+        System.out.println("Game Over!");
+        System.out.println(0);
+    }
     public void run() throws IOException{
         while (true){
             draw();
             // Method waits for a key stroke
             KeyStroke key = screen.readInput();
             processKey(key);
+            arena.moveMonsters();
             if (key.getKeyType() == KeyType.EOF || (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')){
+                break;
+            }
+            if (arena.verifyMonsterCollisions()){
+                endGame();
                 break;
             }
         }
