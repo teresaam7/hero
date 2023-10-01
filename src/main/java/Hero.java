@@ -8,9 +8,21 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
 public class Hero extends Element {
-    public Hero(int x, int y){
+    private Energy energy;
+    public Hero(int x, int y, int startEnergy){
         super(x, y);
+        this.energy = new Energy(startEnergy);
     }
+    public void setEnergy(Energy energy) {
+        this.energy = energy;
+    }
+    public Energy getEnergy() {
+        return energy;
+    }
+    public void energyDecrease(int amount) {
+        energy.energyLoss(amount);
+    }
+
     public Position moveUp(){
         return new Position(getPosition().getX(), getPosition().getY() - 1);
     }
@@ -23,9 +35,8 @@ public class Hero extends Element {
     public Position moveLeft(){
         return new Position(getPosition().getX() - 1, getPosition().getY());
     }
-
     public void draw(TextGraphics graphics){
-        graphics.setForegroundColor(TextColor.Factory.fromString("#FFFF33"));
+        graphics.setForegroundColor(TextColor.Factory.fromString("#DB7093"));
         graphics.enableModifiers(SGR.BOLD);
         graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "X");
     }

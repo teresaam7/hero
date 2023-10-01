@@ -11,8 +11,8 @@ public class Monster extends Element {
         return new Position(getPosition().getX(), getPosition().getY());
     }
     public void draw(TextGraphics graphics){
-        graphics.setForegroundColor(TextColor.Factory.fromString("#9a8fc8"));
+        graphics.setForegroundColor(TextColor.Factory.fromString("#7B68EE"));
         graphics.enableModifiers(SGR.BOLD);
-        graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "MM");
+        graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "M");
     }
 }

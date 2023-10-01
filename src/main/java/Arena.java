@@ -14,11 +14,20 @@ public class Arena {
     private List<Wall> walls;
     private List<Coin> coins;
     private List<Monster> monsters;
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public Arena(int width, int height){
         this.width = width;
         this.height = height;
         // Starting position in the middle
-        this.hero = new Hero(width / 2, height / 2);
+        this.hero = new Hero(width / 2, height / 2, 20);
         this.walls = createWalls();
         this.coins = createCoins();
         this.monsters = createMonsters();
@@ -139,7 +148,9 @@ public class Arena {
     public boolean verifyMonsterCollisions(){
         for (Monster monster: monsters){
             if(monster.getPosition().equals(hero.getPosition())){
-                return true;
+                hero.energyDecrease(1);
+                if (hero.getEnergy().emptyEnergy())
+                    return true;
             }
         }
         return false;
@@ -147,7 +158,7 @@ public class Arena {
     // Draw method for the scenario and all the componenets of the game
     public void draw(TextGraphics graphics) throws IOException {
         // Drawing the arena
-        graphics.setBackgroundColor(TextColor.Factory.fromString("#a5e6c8"));
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#87CEEB"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
         // Drawing the walls
         for (Wall wall : walls) {
@@ -163,5 +174,22 @@ public class Arena {
         }
         // Drawing the hero
         hero.draw(graphics);
+        // Drawing the energy level of the hero
+        TextColor energyColor = changeEnergyColor(hero.getEnergy().getEnergy());
+        graphics.setForegroundColor(energyColor);
+        graphics.putString(new TerminalPosition(1, 1), "Energy: " + hero.getEnergy().getEnergy());
+        graphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+    }
+    // Method to change the color of the energy
+    private TextColor changeEnergyColor(int energyLevel) {
+        if (energyLevel > 20) {
+            return TextColor.Factory.fromString("#00FF00"); // Green
+        } else if (energyLevel > 15) {
+            return TextColor.Factory.fromString("#FFFF00"); // Yellow
+        } else if (energyLevel > 10) {
+            return TextColor.Factory.fromString("#FFA500"); // Orange
+        } else {
+            return TextColor.Factory.fromString("#FF0000"); // Red
+        }
     }
 }
