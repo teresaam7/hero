@@ -14,6 +14,8 @@ public class Arena {
     private List<Wall> walls;
     private List<Coin> coins;
     private List<Monster> monsters;
+    private long lastMonsterSpawnTime;
+    private long monsterSpawnInterval = 5000;
 
     public int getWidth() {
         return width;
@@ -22,7 +24,6 @@ public class Arena {
     public int getHeight() {
         return height;
     }
-
     public Arena(int width, int height){
         this.width = width;
         this.height = height;
@@ -86,20 +87,11 @@ public class Arena {
     private List<Coin> createCoins() {
         Random random = new Random();
         ArrayList<Coin> coins = new ArrayList<>();
-        // Creation of a list to track existing positions
-        List<Position> candidatePositions = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            // Generation of a random position for the coin
-            Position coinPosition = getRandomPosition(random);
-            // Verify if the coin is colliding with the hero and with other coins
-            while (candidatePositions.contains(coinPosition) || coinPosition.equals(hero.getPosition())) {
-                coinPosition = getRandomPosition(random);
-            }
-            coins.add(new Coin(coinPosition.getX(), coinPosition.getY()));
-            candidatePositions.add(coinPosition);
-        }
+        for (int i = 0; i < 5; i++)
+            coins.add(new Coin(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1));
         return coins;
     }
+
     private Position getRandomPosition(Random random) {
         int cX = random.nextInt(width - 2) + 1;
         int cY = random.nextInt(height - 2) + 1;
@@ -116,6 +108,14 @@ public class Arena {
         }
     }
     // Methods related to the monsters that are disturbing our Hero
+    public void initializeMonsters() {
+        monsters.clear();
+        lastMonsterSpawnTime = System.currentTimeMillis();
+        for (int i = 0; i < 7; i++) {
+            spawnMonster();
+        }
+    }
+    // Methods for update the monsters' positions
     private List<Monster> createMonsters(){
         Random random = new Random();
         List<Monster> monsters = new ArrayList<>();
@@ -123,6 +123,19 @@ public class Arena {
             monsters.add(new Monster(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1));
         }
         return monsters;
+    }
+    public void spawnMonster() {
+        Random random = new Random();
+        Monster newMonster = new Monster(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1);
+        monsters.add(newMonster);
+    }
+    public void updateMonsters() {
+        long currentTime = System.currentTimeMillis();
+        // Check if it's time to spawn a new monster
+        if (currentTime - lastMonsterSpawnTime >= monsterSpawnInterval) {
+            createCoins();
+            lastMonsterSpawnTime = currentTime;
+        }
     }
     public boolean canMonsterMove(Position position){
         int x = position.getX();
@@ -138,11 +151,17 @@ public class Arena {
         }
         return true;
     }
-    public void moveMonsters(){
-        for (Monster monster: monsters){
-            if(canMonsterMove(monster.move())){
-                monster.setPosition(monster.move());
+    public void moveMonsters() {
+        Iterator<Monster> iterator = monsters.iterator();
+        while (iterator.hasNext()) {
+            Monster monster = iterator.next();
+            Position newPosition = monster.move();
+            // Check if the new position collides with a wall
+            if (!canMonsterMove(newPosition)) {
+                iterator.remove();
+                continue;
             }
+            monster.setPosition(newPosition);
         }
     }
     public boolean verifyMonsterCollisions(){
