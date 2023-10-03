@@ -34,7 +34,6 @@ public class Arena {
         this.walls = createWalls();
         this.coins = createCoins();
         this.monsters = createMonsters();
-        loadMapFromFile("map.txt");
     }
     // Methods related with the Hero's movement
     public boolean canHeroMove(Position position){

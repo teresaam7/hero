@@ -8,20 +8,30 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TextCharacter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Game {
     private static Screen screen;
-    private Arena arena;
+    private List<Room> rooms;
+    private int currentRoomIdx;
+    private Room currentRoom;
     private final ScheduledExecutorService monsterUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
     private final int monsterUpdateInterval = 1000;
     // Default constructor
     public Game(int width, int height){
         // This code initializes a Lanterna Terminal and a Screen
         try {
-            arena = new Arena(width, height);
+            rooms = new ArrayList<>();
+            rooms.add(new Room(width, height, "map1.txt"));
+            // Start in the first room
+            currentRoomIdx = 0;
+            currentRoom = rooms.get(currentRoomIdx);
+
+
             Terminal terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(width, height)).createTerminal();
             screen = new TerminalScreen(terminal);
             screen.setCursorPosition(null);   // we don’t need a cursor
@@ -34,7 +44,7 @@ public class Game {
     }
     private void draw() throws IOException {
         screen.clear();
-        arena.draw(screen.newTextGraphics());
+        currentRoom.getArena().draw(screen.newTextGraphics());
         screen.refresh();
     }
     public void endGame(){
@@ -51,7 +61,7 @@ public class Game {
                 if (key.getKeyType() == KeyType.EOF || (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')) {
                     break;
                 }
-                if (arena.verifyMonsterCollisions()) {
+                if (currentRoom.getArena().verifyMonsterCollisions()) {
                     endGame();
                     break;
                 }
@@ -62,11 +72,11 @@ public class Game {
         }
     }
     private void updateMonstersPeriodically() {
-        arena.initializeMonsters();
-        arena.updateMonsters();
-        arena.moveMonsters();
+        currentRoom.getArena().initializeMonsters();
+        currentRoom.getArena().updateMonsters();
+        currentRoom.getArena().moveMonsters();
     }
     private void processKey(KeyStroke key) {
-        arena.processKey(key);
+        currentRoom.getArena().processKey(key);
     }
 }
