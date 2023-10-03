@@ -26,7 +26,7 @@ public class Game {
         // This code initializes a Lanterna Terminal and a Screen
         try {
             rooms = new ArrayList<>();
-            rooms.add(new Room(width, height, "map1.txt"));
+            rooms.add(new Room(width, height, "src/main/java/materials/map1.txt"));
             // Start in the first room
             currentRoomIdx = 0;
             currentRoom = rooms.get(currentRoomIdx);

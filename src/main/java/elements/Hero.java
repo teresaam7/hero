@@ -39,20 +39,22 @@ public class Hero extends Element {
     }
     public void draw(TextGraphics graphics){
         // Drawing the character Hero
-        graphics.setForegroundColor(TextColor.Factory.fromString("#DB7093"));
+        graphics.setForegroundColor(TextColor.Factory.fromString("#ff6392"));
         graphics.enableModifiers(SGR.BOLD);
         graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "H");
 
         // Drawing the energy of the Hero
         TextColor energyColor = changeEnergyColor(getEnergy().getEnergy());
         graphics.setForegroundColor(energyColor);
-        graphics.putString(new TerminalPosition(2, 1), "Energy: " + getEnergy().getEnergy());
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#3da5d9"));
+        graphics.enableModifiers(SGR.BLINK);
+        graphics.putString(new TerminalPosition(2, 2), "Energy: " + getEnergy().getEnergy());
         graphics.setForegroundColor(TextColor.ANSI.DEFAULT);
     }
     // Method to change the color of the energy
     private TextColor changeEnergyColor(int energyLevel) {
         if (energyLevel > 5) {
-            return TextColor.Factory.fromString("#00FF00"); // Green
+            return TextColor.Factory.fromString("#affc41"); // Green
         } else if (energyLevel > 4) {
             return TextColor.Factory.fromString("#FFFF00"); // Yellow
         } else if (energyLevel > 3) {

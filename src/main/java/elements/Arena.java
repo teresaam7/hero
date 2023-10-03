@@ -1,5 +1,6 @@
 package elements;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -23,6 +24,7 @@ public class Arena {
     private List<Monster> monsters;
     private long lastMonsterSpawnTime;
     private long monsterSpawnInterval = 5000;
+    private int score = 0;
 
     public int getWidth() {
         return width;
@@ -103,10 +105,14 @@ public class Arena {
         while (iterator.hasNext()) {
             Coin coin = iterator.next();
             if (coin.getPosition().equals(hero.getPosition())) {
+                heroScore(5);
                 iterator.remove();
                 break;
             }
         }
+    }
+    public void heroScore(int coins){
+        score+= coins;
     }
     // Methods related to the monsters that are disturbing our elements.Hero
     public void initializeMonsters() {
@@ -178,7 +184,7 @@ public class Arena {
     // Draw method for the scenario and all the components of the game
     public void draw(TextGraphics graphics) throws IOException {
         // Drawing the arena
-        graphics.setBackgroundColor(TextColor.Factory.fromString("#87CEEB"));
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#70d6ff"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
         // Drawing the walls
         for (Wall wall : walls) {
@@ -194,8 +200,12 @@ public class Arena {
         }
         // Drawing the hero
         hero.draw(graphics);
+        // Drawing the score on the screen
+        graphics.setForegroundColor(TextColor.Factory.fromString("#ff9770"));
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#ffccd5"));
+        graphics.putString(new TerminalPosition(2, 3), "Score: " + score);
     }
-    // Method that loads the map of the game from the map.txt file
+    // Method that loads the map of the game from the map1.txt file
     public void loadMapFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             Random random = new Random();
