@@ -1,8 +1,13 @@
+package elements;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
+import elements.Hero;
+import elements.Monster;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -35,7 +40,7 @@ public class Arena {
         this.coins = createCoins();
         this.monsters = createMonsters();
     }
-    // Methods related with the Hero's movement
+    // Methods related with the elements.Hero's movement
     public boolean canHeroMove(Position position){
         int x = position.getX();
         int y = position.getY();
@@ -85,19 +90,13 @@ public class Arena {
         }
         return walls;
     }
-    // Methods related with the Coins that are collected by the Hero
+    // Methods related with the Coins that are collected by the elements.Hero
     private List<Coin> createCoins() {
         Random random = new Random();
         ArrayList<Coin> coins = new ArrayList<>();
         for (int i = 0; i < 5; i++)
             coins.add(new Coin(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1));
         return coins;
-    }
-
-    private Position getRandomPosition(Random random) {
-        int cX = random.nextInt(width - 2) + 1;
-        int cY = random.nextInt(height - 2) + 1;
-        return new Position(cX, cY);
     }
     public void retrieveCoins(){
         Iterator<Coin> iterator = coins.iterator();
@@ -109,7 +108,7 @@ public class Arena {
             }
         }
     }
-    // Methods related to the monsters that are disturbing our Hero
+    // Methods related to the monsters that are disturbing our elements.Hero
     public void initializeMonsters() {
         monsters.clear();
         lastMonsterSpawnTime = System.currentTimeMillis();
@@ -195,23 +194,6 @@ public class Arena {
         }
         // Drawing the hero
         hero.draw(graphics);
-        // Drawing the energy level of the hero
-        TextColor energyColor = changeEnergyColor(hero.getEnergy().getEnergy());
-        graphics.setForegroundColor(energyColor);
-        graphics.putString(new TerminalPosition(2, 1), "Energy: " + hero.getEnergy().getEnergy());
-        graphics.setForegroundColor(TextColor.ANSI.DEFAULT);
-    }
-    // Method to change the color of the energy
-    private TextColor changeEnergyColor(int energyLevel) {
-        if (energyLevel > 5) {
-            return TextColor.Factory.fromString("#00FF00"); // Green
-        } else if (energyLevel > 4) {
-            return TextColor.Factory.fromString("#FFFF00"); // Yellow
-        } else if (energyLevel > 3) {
-            return TextColor.Factory.fromString("#FFA500"); // Orange
-        } else {
-            return TextColor.Factory.fromString("#FF0000"); // Red
-        }
     }
     // Method that loads the map of the game from the map.txt file
     public void loadMapFromFile(String filePath) {

@@ -1,3 +1,7 @@
+package rooms;
+
+import elements.Arena;
+
 public class Room {
     private Arena arena;
     public Room(int width, int height, String mapFilePath){
