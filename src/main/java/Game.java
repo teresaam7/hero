@@ -16,7 +16,7 @@ public class Game {
     private static Screen screen;
     private Arena arena;
     private final ScheduledExecutorService monsterUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
-    private final int monsterUpdateInterval = 5000;
+    private final int monsterUpdateInterval = 1000;
     // Default constructor
     public Game(int width, int height){
         // This code initializes a Lanterna Terminal and a Screen

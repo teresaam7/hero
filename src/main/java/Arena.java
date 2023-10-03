@@ -3,6 +3,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,10 +30,11 @@ public class Arena {
         this.width = width;
         this.height = height;
         // Starting position in the middle
-        this.hero = new Hero(width / 2, height / 2, 20);
+        this.hero = new Hero(width / 2, height / 2, 6);
         this.walls = createWalls();
         this.coins = createCoins();
         this.monsters = createMonsters();
+        loadMapFromFile("map.txt");
     }
     // Methods related with the Hero's movement
     public boolean canHeroMove(Position position){
@@ -174,7 +177,7 @@ public class Arena {
         }
         return false;
     }
-    // Draw method for the scenario and all the componenets of the game
+    // Draw method for the scenario and all the components of the game
     public void draw(TextGraphics graphics) throws IOException {
         // Drawing the arena
         graphics.setBackgroundColor(TextColor.Factory.fromString("#87CEEB"));
@@ -196,19 +199,47 @@ public class Arena {
         // Drawing the energy level of the hero
         TextColor energyColor = changeEnergyColor(hero.getEnergy().getEnergy());
         graphics.setForegroundColor(energyColor);
-        graphics.putString(new TerminalPosition(1, 1), "Energy: " + hero.getEnergy().getEnergy());
+        graphics.putString(new TerminalPosition(2, 1), "Energy: " + hero.getEnergy().getEnergy());
         graphics.setForegroundColor(TextColor.ANSI.DEFAULT);
     }
     // Method to change the color of the energy
     private TextColor changeEnergyColor(int energyLevel) {
-        if (energyLevel > 20) {
+        if (energyLevel > 5) {
             return TextColor.Factory.fromString("#00FF00"); // Green
-        } else if (energyLevel > 15) {
+        } else if (energyLevel > 4) {
             return TextColor.Factory.fromString("#FFFF00"); // Yellow
-        } else if (energyLevel > 10) {
+        } else if (energyLevel > 3) {
             return TextColor.Factory.fromString("#FFA500"); // Orange
         } else {
             return TextColor.Factory.fromString("#FF0000"); // Red
+        }
+    }
+    // Method that loads the map of the game from the map.txt file
+    public void loadMapFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            Random random = new Random();
+            String line;
+            int row = 0;
+            while ((line = reader.readLine()) != null) {
+                for (int col = 0; col < line.length(); col++) {
+                    char symbol = line.charAt(col);
+                    // Adjustment of the screen's size
+                    int screenX = col + (width - line.length()) / 2;
+                    int screenY = row + (height - 1 - row);
+                    if (symbol == 'W') {
+                        walls.add(new Wall(screenX, screenY));
+                    } else if (symbol == 'H') {
+                        hero.setPosition(new Position(screenX, screenY/2));
+                    } else if (symbol == '$') {
+                        coins.add(new Coin(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1));
+                    } else if (symbol == 'M') {
+                        monsters.add(new Monster(screenX, screenY));
+                    }
+                }
+                row++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
