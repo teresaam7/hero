@@ -1,4 +1,7 @@
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -20,7 +23,8 @@ public class Game {
     private int currentRoomIdx;
     private Room currentRoom;
     private final ScheduledExecutorService monsterUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
-    private final int monsterUpdateInterval = 1000;
+    private final int monsterUpdateInterval = 50;
+    private boolean finalMessageDisplayed = false;
     // Default constructor
     public Game(int width, int height){
         // This code initializes a Lanterna Terminal and a Screen
@@ -47,12 +51,19 @@ public class Game {
         currentRoom.getArena().draw(screen.newTextGraphics());
         screen.refresh();
     }
-    public void endGame(){
-        System.out.println("Game Over!");
-        System.out.println(0);
+    public void endGame(boolean beatsGame) throws IOException{
+        if (beatsGame) {
+            finalMessage("Congratulations! You won!");
+            System.out.println("Congratulations! You won!");
+
+        } else {
+            finalMessage("Game Over. You lost!");
+            System.out.println("Game Over. You lost!");
+        }
     }
     public void run() throws IOException {
         monsterUpdateExecutor.scheduleAtFixedRate(this::updateMonstersPeriodically, 0, monsterUpdateInterval, TimeUnit.MILLISECONDS);
+        boolean beatsGame = true;
         try {
             while (true) {
                 draw();
@@ -61,8 +72,17 @@ public class Game {
                 if (key.getKeyType() == KeyType.EOF || (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')) {
                     break;
                 }
-                if (currentRoom.getArena().verifyMonsterCollisions()) {
-                    endGame();
+                if (!finalMessageDisplayed && currentRoom.getArena().verifyMonsterCollisions()) {
+                    beatsGame = false;
+                    endGame(beatsGame);
+                    finalMessageDisplayed = true;
+                    screen.refresh();
+                    // Implementation of a delay of 2 seconds in order to display the final message
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
             }
@@ -71,10 +91,23 @@ public class Game {
             screen.close();
         }
     }
+    // Method for the message that is displayed on the screen when the game ends
+    public void finalMessage(String message) throws IOException{
+        if (!finalMessageDisplayed){
+            TextGraphics graphics = screen.newTextGraphics();
+            graphics.setForegroundColor(TextColor.ANSI.WHITE);
+            graphics.setBackgroundColor(TextColor.Factory.fromString("#7b68ee"));
+            graphics.enableModifiers(SGR.BOLD);
+            int w = (screen.getTerminalSize().getColumns() - message.length()) / 2;
+            int h = screen.getTerminalSize().getRows() / 2;
+            graphics.putString(w, h, message);
+            screen.refresh();
+            finalMessageDisplayed = true;
+        }
+    }
     private void updateMonstersPeriodically() {
-        currentRoom.getArena().initializeMonsters();
-        currentRoom.getArena().updateMonsters();
         currentRoom.getArena().moveMonsters();
+        currentRoom.getArena().updateMonsters();
     }
     private void processKey(KeyStroke key) {
         currentRoom.getArena().processKey(key);

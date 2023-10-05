@@ -23,7 +23,8 @@ public class Arena {
     private List<Coin> coins;
     private List<Monster> monsters;
     private long lastMonsterSpawnTime;
-    private long monsterSpawnInterval = 5000;
+    private long monsterDespawnInterval = 10000;
+    private long monsterSpawnInterval = 100;
     private int score = 0;
 
     public int getWidth() {
@@ -37,7 +38,7 @@ public class Arena {
         this.width = width;
         this.height = height;
         // Starting position in the middle
-        this.hero = new Hero(width / 2, height / 2, 6);
+        this.hero = new Hero(width / 2, height / 2, 1);
         this.walls = createWalls();
         this.coins = createCoins();
         this.monsters = createMonsters();
@@ -115,14 +116,6 @@ public class Arena {
         score+= coins;
     }
     // Methods related to the monsters that are disturbing our elements.Hero
-    public void initializeMonsters() {
-        monsters.clear();
-        lastMonsterSpawnTime = System.currentTimeMillis();
-        for (int i = 0; i < 7; i++) {
-            spawnMonster();
-        }
-    }
-    // Methods for update the monsters' positions
     private List<Monster> createMonsters(){
         Random random = new Random();
         List<Monster> monsters = new ArrayList<>();
@@ -131,18 +124,34 @@ public class Arena {
         }
         return monsters;
     }
-    public void spawnMonster() {
+    private void spawnMonsterRandomly() {
         Random random = new Random();
-        Monster newMonster = new Monster(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1);
-        monsters.add(newMonster);
+        int x = random.nextInt(width - 2) + 1;
+        int y = random.nextInt(height - 2) + 1;
+        Position monsterPosition = new Position(x, y);
+        if (canMonsterMove(monsterPosition)) {
+            monsters.add(new Monster(x, y));
+        }
+    }
+    private void despawnMonsters(long currentTime) {
+        Iterator<Monster> iterator = monsters.iterator();
+        // Check if it's time to despawn a new monster
+        while (iterator.hasNext()) {
+            Monster monster = iterator.next();
+            if (!monster.isDespawned() && currentTime - monster.getSpawnTime() >= monsterDespawnInterval) {
+                iterator.remove();
+                monster.setDespawned(true);
+            }
+        }
     }
     public void updateMonsters() {
         long currentTime = System.currentTimeMillis();
         // Check if it's time to spawn a new monster
         if (currentTime - lastMonsterSpawnTime >= monsterSpawnInterval) {
-            createCoins();
+            spawnMonsterRandomly();
             lastMonsterSpawnTime = currentTime;
         }
+        despawnMonsters(currentTime);
     }
     public boolean canMonsterMove(Position position){
         int x = position.getX();
@@ -160,17 +169,23 @@ public class Arena {
     }
     public void moveMonsters() {
         Iterator<Monster> iterator = monsters.iterator();
+        long currentTime = System.currentTimeMillis();
         while (iterator.hasNext()) {
             Monster monster = iterator.next();
             Position newPosition = monster.move();
             // Check if the new position collides with a wall
             if (!canMonsterMove(newPosition)) {
                 iterator.remove();
-                continue;
+            } else {
+                monster.setPosition(newPosition);
             }
-            monster.setPosition(newPosition);
+            // Check if it's possible to despawn the monster
+            if (currentTime - monster.getSpawnTime() >= monsterDespawnInterval) {
+                iterator.remove();
+            }
         }
     }
+
     public boolean verifyMonsterCollisions(){
         for (Monster monster: monsters){
             if(monster.getPosition().equals(hero.getPosition())){
@@ -201,8 +216,8 @@ public class Arena {
         // Drawing the hero
         hero.draw(graphics);
         // Drawing the score on the screen
-        graphics.setForegroundColor(TextColor.Factory.fromString("#ff9770"));
-        graphics.setBackgroundColor(TextColor.Factory.fromString("#ffccd5"));
+        graphics.setForegroundColor(TextColor.Factory.fromString("#e6e6fa"));
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#e79fc4"));
         graphics.putString(new TerminalPosition(2, 3), "Score: " + score);
     }
     // Method that loads the map of the game from the map1.txt file
