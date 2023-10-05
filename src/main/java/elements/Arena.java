@@ -43,6 +43,15 @@ public class Arena {
         this.coins = createCoins();
         this.monsters = createMonsters();
     }
+    // Method to initialize the arena in order to restart the game
+    public void initialize() {
+        hero = new Hero(width / 2, height / 2, 1);
+        walls = createWalls();
+        coins = createCoins();
+        monsters = createMonsters();
+        lastMonsterSpawnTime = 0;
+        score = 0;
+    }
     // Methods related with the elements.Hero's movement
     public boolean canHeroMove(Position position){
         int x = position.getX();

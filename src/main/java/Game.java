@@ -54,36 +54,45 @@ public class Game {
     public void endGame(boolean beatsGame) throws IOException{
         if (beatsGame) {
             finalMessage("Congratulations! You won!");
-            System.out.println("Congratulations! You won!");
 
         } else {
-            finalMessage("Game Over. You lost!");
-            System.out.println("Game Over. You lost!");
+            finalMessage("Game Over. You lost! Press 'R' to restart or 'Q' to quit");;
         }
     }
     public void run() throws IOException {
         monsterUpdateExecutor.scheduleAtFixedRate(this::updateMonstersPeriodically, 0, monsterUpdateInterval, TimeUnit.MILLISECONDS);
         boolean beatsGame = true;
+        boolean restart = false;
         try {
             while (true) {
+                if (restart) {
+                    currentRoom.getArena().initialize();
+                    finalMessageDisplayed = false;
+                    restart = false;
+                }
                 draw();
                 KeyStroke key = screen.readInput();
                 processKey(key);
                 if (key.getKeyType() == KeyType.EOF || (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')) {
                     break;
                 }
-                if (!finalMessageDisplayed && currentRoom.getArena().verifyMonsterCollisions()) {
-                    beatsGame = false;
-                    endGame(beatsGame);
-                    finalMessageDisplayed = true;
-                    screen.refresh();
-                    // Implementation of a delay of 2 seconds in order to display the final message
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                if (!finalMessageDisplayed) {
+                    if (currentRoom.getArena().verifyMonsterCollisions()) {
+                        beatsGame = false;
+                        endGame(beatsGame);
+                        finalMessageDisplayed = true;
+                        screen.refresh();
+                        // Implementation of a delay of 2 seconds in order to display the final message
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        continue;
                     }
-                    break;
+                }
+                if (key.getKeyType() == KeyType.Character && (key.getCharacter() == 'R' || key.getCharacter() == 'r')) {
+                    restart = true;
                 }
             }
         } finally {
