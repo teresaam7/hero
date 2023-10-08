@@ -1,4 +1,4 @@
-package elements;
+package com.teresaam7.hero.elements;
 
 public class Position {
     private int x;

@@ -1,10 +1,9 @@
-package elements;
+package com.teresaam7.hero.elements;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import elements.Element;
 
 import java.util.Random;
 

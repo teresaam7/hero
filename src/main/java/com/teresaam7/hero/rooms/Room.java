@@ -1,6 +1,6 @@
-package rooms;
+package com.teresaam7.hero.rooms;
 
-import elements.Arena;
+import com.teresaam7.hero.elements.Arena;
 
 public class Room {
     private Arena arena;

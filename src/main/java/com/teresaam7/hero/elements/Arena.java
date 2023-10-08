@@ -1,13 +1,10 @@
-package elements;
+package com.teresaam7.hero.elements;
 
-import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import elements.Hero;
-import elements.Monster;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -38,7 +35,7 @@ public class Arena {
         this.width = width;
         this.height = height;
         // Starting position in the middle
-        this.hero = new Hero(width / 2, height / 2, 1);
+        this.hero = new Hero(width / 2, height / 2, 6);
         this.walls = createWalls();
         this.coins = createCoins();
         this.monsters = createMonsters();

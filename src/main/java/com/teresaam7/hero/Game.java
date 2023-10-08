@@ -1,3 +1,5 @@
+package com.teresaam7.hero;
+
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -8,7 +10,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-import rooms.Room;
+import com.teresaam7.hero.rooms.Room;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ public class Game {
             finalMessage("Congratulations! You won!");
 
         } else {
-            finalMessage("Game Over. You lost! Press 'R' to restart or 'Q' to quit");;
+            finalMessage("com.teresaam7.hero.Game Over. You lost! Press 'R' to restart or 'Q' to quit");;
         }
     }
     public void run() throws IOException {
