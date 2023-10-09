@@ -58,7 +58,7 @@ public class Game {
             finalMessage("Congratulations! You won!");
 
         } else {
-            finalMessage("com.teresaam7.hero.Game Over. You lost! Press 'R' to restart or 'Q' to quit");;
+            finalMessage("Game Over. You lost! Press 'R' to restart or 'Q' to quit");;
         }
     }
     public void run() throws IOException {
