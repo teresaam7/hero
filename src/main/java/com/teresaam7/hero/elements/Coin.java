@@ -9,7 +9,7 @@ public class Coin extends Element {
     public Coin(int x, int y){
         super(x, y);
     }
-    public void draw(TextGraphics graphics){
+    public void draw(GenericTextGraphics graphics){
         graphics.setForegroundColor(TextColor.Factory.fromString("#ffdf00"));
         graphics.enableModifiers(SGR.BOLD);
         graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "$");

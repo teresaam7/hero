@@ -9,7 +9,7 @@ public class Wall extends Element {
     public Wall(int x, int y){
         super(x, y);
     }
-    public void draw(TextGraphics graphics) {
+    public void draw(GenericTextGraphics graphics) {
         graphics.setForegroundColor(TextColor.Factory.fromString("#98FB98"));
         graphics.enableModifiers(SGR.BOLD);
         graphics.putString(new TerminalPosition(getPosition().getX(), getPosition().getY()), "W");

@@ -203,7 +203,7 @@ public class Arena {
         return false;
     }
     // Draw method for the scenario and all the components of the game
-    public void draw(TextGraphics graphics) throws IOException {
+    public void draw(GenericTextGraphics graphics) throws IOException {
         // Drawing the arena
         graphics.setBackgroundColor(TextColor.Factory.fromString("#70d6ff"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');

@@ -33,7 +33,7 @@ public class Hero extends Element {
     public Position moveLeft(){
         return new Position(getPosition().getX() - 1, getPosition().getY());
     }
-    public void draw(TextGraphics graphics){
+    public void draw(GenericTextGraphics graphics){
         // Drawing the character Hero
         graphics.setForegroundColor(TextColor.Factory.fromString("#ff6392"));
         graphics.enableModifiers(SGR.BOLD);
