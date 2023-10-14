@@ -48,7 +48,7 @@ public class Hero extends Element {
         graphics.setForegroundColor(TextColor.ANSI.DEFAULT);
     }
     // Method to change the color of the energy
-    private TextColor changeEnergyColor(int energyLevel) {
+    public TextColor changeEnergyColor(int energyLevel) {
         if (energyLevel > 5) {
             return TextColor.Factory.fromString("#affc41"); // Green
         } else if (energyLevel > 4) {

@@ -10,6 +10,8 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.teresaam7.hero.elements.GenericTextGraphics;
+import com.teresaam7.hero.elements.NewTextGraphics;
 import com.teresaam7.hero.rooms.Room;
 
 import java.io.IOException;
@@ -49,8 +51,10 @@ public class Game {
         }
     }
     private void draw() throws IOException {
+        TextGraphics textGraphics = screen.newTextGraphics();
+        GenericTextGraphics graphics = new NewTextGraphics(textGraphics);
         screen.clear();
-        currentRoom.getArena().draw(screen.newTextGraphics());
+        currentRoom.getArena().draw(graphics);
         screen.refresh();
     }
     public void endGame(boolean beatsGame) throws IOException{
